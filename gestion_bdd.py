@@ -20,25 +20,20 @@ class BDD():
         self.active_pokemons = []
 
         with open(self.file_path, 'r') as f:
-            # initialise la bdd en l'ouvrant
-            try:
+            try: # initialise la bdd en l'ouvrant
                 self.data = json.load(f)
-            except json.decoder.JSONDecodeError:
-                # si le fichier est vide, on initialise data à une liste vide
+            except json.decoder.JSONDecodeError: # si le fichier est vide, on initialise data à une liste vide
                 self.data = []
 
         
         with open('pokedex.json', 'r') as f:
-            # récupérer le pokedex
-            # https://github.com/fanzeyi/pokemon.json/blob/master/pokedex.json
-            self.pokedex = json.load(f)
-            # pokedex est une liste de dictionnaire, 1 pokemon par dictionnaire
+            # récupérer le pokedex https://github.com/fanzeyi/pokemon.json/blob/master/pokedex.json
+            self.pokedex = json.load(f) # pokedex est une liste de dictionnaire, 1 pokemon par dictionnaire
 
 
         with open('types.json', 'r') as f:
             # récuperer les types
-            self.types = json.load(f)
-            # types est une liste de dictionnaire contenant tous les types et leurs faiblesses
+            self.types = json.load(f) # types est une liste de dictionnaire contenant tous les types et leurs faiblesses
     
 
 
@@ -101,17 +96,14 @@ class BDD():
     # field = key, subfield = key de la key si besoin
     def modifier(self, player, pokemon, change, field, subfield=False):
         if subfield != False:
-            self.data[player-1][pokemon][field][subfield] = change
+            self.data[player-1][pokemon][field].update({subfield:change})
+            # print(self.data[player-1][pokemon][field])
         else:
-            self.data[player-1][pokemon][field] = change
+            self.data[player-1][pokemon].update({field:change})
         
     
 
-    # fuite -> suppression du joueur dans la bdd?
-    def fuite(self, player):
-        self.suppr(player)
-
-    # add another player's pokemons
+    # ajouter les pokemons du joueur perdant
     def victory(self, player_winner, player_loser):
         winner = self.data[player_winner-1]
         loser = self.data[player_loser-1]
@@ -137,16 +129,26 @@ class BDD():
         self.suppr(num_loser)
 
 
-    # sauvegarde d'un joueur dans la bdd --> restaurer les HP de ses pokemons
-    ############# Marche pas
+    # restaurer les HP d'un pokemon
     def restaurer_HP(self, player, pokemon):
-        player_data = self.data[player-1]
-        poke_id = player_data[pokemon]["id"]
+        player_data = self.data[player-1][pokemon]
+        poke_id = player_data["id"]
         print("ID -----------", poke_id)
-        for pok in self.active_pokemons:
-            print(pok["id"])
-            print(pok["base"]["HP"])
+        for pok in self.pokedex:
+            if pok["id"] == poke_id:
+                print("POKID --------", pok["id"])
+                print("PLAYER HP --- ", player_data["base"]["HP"], "--- POKE HP ---", pok["base"]["HP"])
             # arrive pas à récupérer les HP de base des pokemons
+
+
+
+    # fuite -> la partie s'arrête et les joueurs gardent leur pokemons
+    def fuite(self, player):
+        for pokemon in range(1, len(self.data[player-1])):
+            self.restaurer_HP(player, "pokemon"+str(pokemon))
+            print(self.data[player-1]["pokemon"+str(pokemon)])
+
+
 
     ############# Marche pas
     def save_player(self, player):
@@ -191,13 +193,14 @@ pokebdd.update()
 # pokebdd.victory(1,2)
 # pokebdd.fuite(1)
 pokebdd.affichage(1)
+pokebdd.fuite(1)
 # pokebdd.affichage(player=1)
 # print(pokebdd.active_pokemons)
 
-pokebdd.restaurer_HP(player=1, pokemon="pokemon3")
+# pokebdd.restaurer_HP(player=1, pokemon="pokemon3")
 
 print("\n########################################\n")
 
 # pokebdd.save_player(1)
 pokebdd.update()
-# pokebdd.affichage()
+pokebdd.affichage()
