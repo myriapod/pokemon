@@ -175,7 +175,17 @@ class BDD():
         # print(pokedex)
         
 
-
+    # donne les faiblesses d'un pokemon
+    def faiblesses(self, player, pokemon):
+        types_pokemon = self.data[player-1][pokemon]["type"]
+        faiblesses = []
+        for types in types_pokemon:
+            for entry in self.types:
+                if entry["name"] == types:
+                    # une seule liste avec toutes les faiblesses
+                    faiblesses+=entry["weaknesses"]
+                    # faiblesses.append(entry["weaknesses"]) -> une liste de liste des faiblesses s'il y a plusieurs types
+        return faiblesses
 
 
 # Set up
@@ -187,25 +197,26 @@ pokebdd.suppr(1)
 pokebdd.ajout_joueur("joueur1")
 pokebdd.update()
 # pokebdd.affichage()
+pokebdd.faiblesses(1, "pokemon1")
 
 
 print("\n########################################\n")
 
 # actions
 
-pokebdd.modifier(player=1, pokemon="pokemon2", change=0, field='base', subfield='HP')
-pokebdd.update()
+# pokebdd.modifier(player=1, pokemon="pokemon2", change=0, field='base', subfield='HP')
+# pokebdd.update()
 # pokebdd.victory(1,2)
 # pokebdd.fuite(1)
-pokebdd.affichage(1)
-pokebdd.fuite(1)
+# pokebdd.affichage(1)
+# pokebdd.fuite(1)
 # pokebdd.affichage(player=1)
 # print(pokebdd.active_pokemons)
 
 # pokebdd.restaurer_HP(player=1, pokemon="pokemon3")
 
-print("\n########################################\n")
+# print("\n########################################\n")
 
 # pokebdd.save_player(1)
-pokebdd.update()
-pokebdd.affichage()
+# pokebdd.update()
+# pokebdd.affichage()
