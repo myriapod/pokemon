@@ -12,32 +12,40 @@
 import json
 import random
 
-# récupérer le pokedex
-# https://github.com/fanzeyi/pokemon.json/blob/master/pokedex.json
-with open('pokedex.json', 'r') as f:
-    pokedex = json.load(f)
-# pokedex is a list of dictionnaries containing all of the pokemons
-
-# récuperer les types
-with open('types.json', 'r') as f:
-    types = json.load(f)
-# types is a list of dictionnaries containing all of the types and their weaknesses
 
 class BDD():
-    # initialise la bdd en l'ouvrant
+    
     def __init__(self, bdd_file):
         self.file_path = bdd_file
+        self.active_pokemons = []
 
         with open(self.file_path, 'r') as f:
+            # initialise la bdd en l'ouvrant
             try:
                 self.data = json.load(f)
             except json.decoder.JSONDecodeError:
+                # si le fichier est vide, on initialise data à une liste vide
                 self.data = []
+
+        
+        with open('pokedex.json', 'r') as f:
+            # récupérer le pokedex
+            # https://github.com/fanzeyi/pokemon.json/blob/master/pokedex.json
+            self.pokedex = json.load(f)
+            # pokedex est une liste de dictionnaire, 1 pokemon par dictionnaire
+
+
+        with open('types.json', 'r') as f:
+            # récuperer les types
+            self.types = json.load(f)
+            # types est une liste de dictionnaire contenant tous les types et leurs faiblesses
     
-    # affiche la bdd dans le terminal:
-    # - toute la bdd
-    # - player=1 ou player=2 pour un joueur en particulier
+
+
     def affichage(self, player=False):
+        # affiche la bdd dans le terminal:
+        # - toute la bdd
+        # - player=1 ou player=2 pour un joueur en particulier
         if player != False:
             for key in self.data[int(player-1)]:
                 print(key, " - ", self.data[int(player-1)][key])
@@ -53,8 +61,8 @@ class BDD():
     # format de la bdd:
     # [ {joueur: nomdujoueur1, pokemon1:{pokemon1}, pokemon2:{pokemon2}, pokemon3:{pokemon3}},
     # {joueur: nomdujoueur2, pokemon1:{pokemon1}, pokemon2:{pokemon2}, pokemon3:{pokemon3}} ]
-    def random_pokemon(self, pokedex):
-        return random.choice(pokedex)
+    def random_pokemon(self):
+        return random.choice(self.pokedex)
     
     def ajout_joueur(self, player):
         existe = False
@@ -68,7 +76,8 @@ class BDD():
             pok_liste = {"player":player}
             for i in range(3):
                 keyname = "pokemon"+str(i+1)
-                pok_liste[keyname] = self.random_pokemon(pokedex)
+                pok_liste[keyname] = self.random_pokemon()
+                self.active_pokemons.append(pok_liste[keyname])
 
             self.data.append(pok_liste)
             
@@ -95,6 +104,7 @@ class BDD():
             self.data[player-1][pokemon][field][subfield] = change
         else:
             self.data[player-1][pokemon][field] = change
+        
     
 
     # fuite -> suppression du joueur dans la bdd?
@@ -108,7 +118,7 @@ class BDD():
         # on récupère le dictionnaire de pokemon1, 2 et 3 de loser
         # on les rajoutes à pokemon 5, 4 et 6 de winner
 
-        winners_poke = len(winner)-1
+        winners_poke = len(winner)
         losers_poke = len(loser)
         
         # on copie les pokemons du joueur perdant dans une liste
@@ -128,6 +138,17 @@ class BDD():
 
 
     # sauvegarde d'un joueur dans la bdd --> restaurer les HP de ses pokemons
+    ############# Marche pas
+    def restaurer_HP(self, player, pokemon):
+        player_data = self.data[player-1]
+        poke_id = player_data[pokemon]["id"]
+        print("ID -----------", poke_id)
+        for pok in self.active_pokemons:
+            print(pok["id"])
+            print(pok["base"]["HP"])
+            # arrive pas à récupérer les HP de base des pokemons
+
+    ############# Marche pas
     def save_player(self, player):
         player_data = self.data[player-1]
 
@@ -137,10 +158,11 @@ class BDD():
 
             # on pourrait garder en mémoire la liste des pokemons actuellement sur la partie mais j'ai pas réussi à le faire
             # pour quelque raison ça bug ??
-            for pokemon in pokedex:
-                if pokemon["id"] == poke_id:
-                    full_HP = pokemon["base"]["HP"]
-                    self.modifier(player, keyname, full_HP, "base", "HP")
+            for poked in self.active_pokemons:
+                if poked["id"] == poke_id:
+                    print(poked)
+                    print(poked["base"]["HP"])
+                    self.modifier(player, keyname, poked["base"]["HP"], "base", "HP")
 
         # print(pokedex)
         
@@ -151,27 +173,31 @@ class BDD():
 # Set up
 
 pokebdd = BDD('bdd.json')
-pokebdd.suppr(player=1)
-pokebdd.suppr(player=1)
+
+pokebdd.suppr(1)
+pokebdd.active_pokemons=[]
 
 pokebdd.ajout_joueur("joueur1")
-pokebdd.ajout_joueur("joueur2")
 pokebdd.update()
-pokebdd.affichage(1)
+# pokebdd.affichage()
 
 
 print("\n########################################\n")
 
 # actions
 
-pokebdd.modifier(player=1, pokemon="pokemon2", change=0, field='base', subfield='HP')
-# pokebdd.victory(2,1)
+pokebdd.modifier(player=1, pokemon="pokemon3", change=0, field='base', subfield='HP')
+pokebdd.update()
+# pokebdd.victory(1,2)
 # pokebdd.fuite(1)
 pokebdd.affichage(1)
 # pokebdd.affichage(player=1)
+# print(pokebdd.active_pokemons)
+
+pokebdd.restaurer_HP(player=1, pokemon="pokemon3")
 
 print("\n########################################\n")
 
-pokebdd.save_player(1)
+# pokebdd.save_player(1)
 pokebdd.update()
-pokebdd.affichage(1)
+# pokebdd.affichage()
