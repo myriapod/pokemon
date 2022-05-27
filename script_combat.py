@@ -21,27 +21,6 @@ from random import randrange
 # } 
 
 
-class Pokemon ():
-
-    # Caractéristique du pokémon 
-    def __init__(self,id, name, type, base):
-        self.name=name
-        self.id=id 
-        self.type=type  # Attention type est une liste dans un dictionnaire (pokedex) qu'il faudra parcourir 
-        self.base=base # Attention base est un dictionnaire dans un dictionnaire (pokedex) il faudra utilisé la clé
-        self.combat=True 
-
-    # Méthode attaque (prendre en compte son type et le type de l'adversaire)
-    # Si le type du pokemon attaqué et dans les faiblesses du pokemon attaquant, on applique la resolution des dégats avec "Sp. ATTACK"
-    def attaque (): 
-        print("attaque") # en attendant de faire cette méthode 
-
-    # Méthode ko : 
-    def ko (self, base): 
-        if base ["HP"] <= 0 : 
-            self.combat=False 
-
-    
 
 class Dresseur (): 
 
@@ -52,13 +31,19 @@ class Dresseur ():
         self.pokemon=Pokemon.name # pokémon actif au combat 
         self.ko=pokemon_ko # c'est un dictionnaire
         self.fuite=False 
+ 
 
     # Méthode de tirage aléatoire des 3 pokémons dans la BDD qui constitueront le pokédex 
 
 
     # Méthode tirage aléatioire du pokémon qui partira au combat 
 
-    
+
+    # Méthode changement de Pokémon (à finir)
+    def change (): 
+        print("changement de pokémon")
+        #changement du pokémon actif (Pokemon.name)
+
     # Méthode essai de fuite du dresseur 
     def essayer_de_fuir (self): 
         ra=randrange(100)
@@ -67,15 +52,39 @@ class Dresseur ():
         else : 
             self.fuite = False 
     
-    # Si pokémon actif KO changement de pokémon actif (Pokemon.name)
 
+
+class Pokemon ():
+
+    # Caractéristique du pokémon 
+    def __init__(self,id, name, type, base):
+        self.name=name
+        self.id=id 
+        self.type=type  # Attention type est une liste dans un dictionnaire (pokedex) qu'il faudra parcourir 
+        self.base=base # Attention base est un dictionnaire dans un dictionnaire (pokedex) il faudra utilisé la clé
+        self.combat=True 
+
+
+    # Méthode attaque (prendre en compte son type et le type de l'adversaire)
+    # Si le type du pokemon attaqué et dans les faiblesses du pokemon attaquant, on applique la resolution des dégats avec "Sp. ATTACK"
+    def attaque (): 
+        print("attaque") # en attendant de faire cette méthode 
+
+
+    # Méthode ko : 
+    def ko (self, base): 
+        if base ["HP"] <= 0 : 
+            self.combat=False 
+            Dresseur.change 
 
     
 
-class Combat(self): 
+class Combat(): 
 
-    #def __init__(self):
+    # def __init__(self):
+    #     self.dresseurs= [liste des dresseurs]
         
+
     # Méthode qui compare les speed des deux pokémons qui vont combattre, le plus rapide commence 
     # def qui_commence (): 
        
@@ -88,9 +97,20 @@ class Combat(self):
         print("2) Changer de pokémon")
         print("3) Essayer de fuir le combat")
         choix=input()
-        # Application du choix du dresseur 
+        if choix == 1 : 
+            Pokemon.attaque 
+        elif choix == 2 : 
+            Dresseur.change
+        elif choix == 3 : 
+            Dresseur.fuite 
+        else :
+            print("Saisie erronée") 
+            Combat.partie 
         # affichage résultat 
 
     # Méthode affichage vainqueur : annonce du vainqueur de la partie changement dictionnaire perdant perd tous ses pokémons
 
         
+
+
+
