@@ -119,7 +119,6 @@ class BDD():
 
 
     def debut_de_la_partie(self, player1, player2):
-        print("RESET=", self.reset)
         if self.reset == True:
             for i in range(len(self.data)):
                 self.suppr(1)
