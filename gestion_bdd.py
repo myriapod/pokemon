@@ -1,14 +1,3 @@
-# - script qui reçoit des infos du script combat
-# - importer la bdd pokemon
-# - script lit et écrit dans bdd.txt
-# -- début de la partie-- 
-# def creation entrée
-# def récuperer les pokemons full hp
-# -- fin de la partie --
-# def victoire
-# (joueur gagnant récupère les 3 pokemons)
-# def defaite (suppr du joueur de la bdd)
-
 import json
 import random
 import copy
@@ -61,7 +50,11 @@ class BDD():
     # player = 1 ou 2
     def suppr(self, player):
         self.data.pop(player-1)
-    
+
+    def reset_bdd(self):
+        self.reset = True
+        self.suppr(1)
+        self.suppr(1)
 
     # modifie un élément de la bdd
     # player = 1 ou 2
@@ -71,10 +64,8 @@ class BDD():
     def modifier(self, player, pokemon, change, field, subfield=False):
         if subfield != False:
             self.data[player-1][pokemon][field].update({subfield:change})
-
         else:
             self.data[player-1][pokemon].update({field:change})
-
         self.update()
         
     # restaurer les HP d'un pokemon
@@ -119,7 +110,6 @@ class BDD():
 
 
     def debut_de_la_partie(self, player1, player2):
-        print("RESET=", self.reset)
         if self.reset == True:
             for i in range(len(self.data)):
                 self.suppr(1)
@@ -205,6 +195,7 @@ class BDD():
         self.reset = False
         for i in range(1,len(self.data[player-1])):
             self.restaurer_HP(player, "pokemon"+str(i))
+        self.update()
 
         
 
