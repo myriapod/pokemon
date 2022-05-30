@@ -174,7 +174,7 @@ class Combat():
         else: # on choisit un pokemon au hasard parmi la liste des pokemons accessbiles
             self.liste_pokemon_choisis[j]=random.choice(self.ordre_tour[j].liste_pokemon_accessible)
 
-        # on met à choisi = False les autres pokemons
+        # on met à choisi = False les autres pokemons pour éviter les conflits avec le pokemon choisi d'avant
         for pokemon in self.ordre_tour[j].list_pokemon:
             if pokemon != self.liste_pokemon_choisis[j]:
                 pokemon.choisi == False
@@ -263,8 +263,7 @@ class Combat():
 
         # en fonction de la valeur du reset, on supprime les lignes qu'il faut dans la bdd
         if reset == 3:
-            pokebdd.suppr(1)
-            pokebdd.suppr(1)
+            pokebdd.reset_bdd()
         elif reset == 1:
             pokebdd.suppr(1)
         elif reset == 2:
@@ -293,7 +292,7 @@ while joueur1 == joueur2:
 
 pokebdd.debut_de_la_partie(joueur1, joueur2)
 
-# on peut manuellement reset la partie si besoin
+# on peut manuellement reset la partie si besoin avec:
 # pokebdd.reset = True
 
 # création de la liste des pokemons (si un joueur existe déjà dans la bdd, on ne va pas lui créer de nouveaux pokemons)
@@ -301,7 +300,7 @@ liste_pokemons = {1:[joueur1], 2:[joueur2]}
 for joueur in range(1,3): # de 1 à 2
     for pokemon in range(1,len(pokebdd.data[joueur-1])): # on commence à 1 car 1 c'est "player":joueur[1 à 2]
         name = "pokemon"+str(pokemon)
-        poke_name = Pokemon(joueur, name)
+        poke_name = Pokemon(joueur, name) # création des objets pokemons du joueur
         liste_pokemons[joueur].append(poke_name)
         # liste_pokemons est un dictionnaire de la forme:
         # { joueur1: [{pokemon1}, {pokemon2}, {pokemon3}], joueur2: [ {pokemon1}, {pokemon2}, {pokemon3} ]}
