@@ -3,6 +3,7 @@ import gestion_bdd as bdd
 import copy
 import re
 
+
 class Pokemon ():
     def __init__(self, player, pokemon): # player = 1 ou 2, pokemon vient de sa liste de pokemons prise dans la bdd
         self.nom=pokebdd.get_name(player, pokemon) # récupère le nom français
