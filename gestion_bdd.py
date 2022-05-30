@@ -56,8 +56,8 @@ class BDD():
 
     def reset_bdd(self): # reset total de la bdd
         self.reset = True
-        self.suppr(1)
-        self.suppr(1)
+        while len(self.data) != 0:
+            self.suppr(1)
 
     
     def modifier(self, player, pokemon, change, field, subfield=False):
