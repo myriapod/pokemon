@@ -11,6 +11,9 @@ Groupe 6 : Cecilia, Maureen, Yasmine, Justin, Solene
 
 4. Programme principal: combat.py
 
+5. Jeu à distance: thread_server.py, thread_client.py (des essais qui n'ont pas été mis en relation avec le combat et la bdd)
+
 
 <h2>Lancement</h2>
-Lancer le programme principal combat.py
+<b>Pour lancer un combat:</b> Lancer le programme principal combat.py.
+<b>Pour lancer la connexion à distance:</b> Lancer thread.server.py et un ou plusieurs thread_client.py en parallèle.
