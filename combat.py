@@ -3,6 +3,7 @@ import gestion_bdd as bdd
 import copy
 import re
 
+
 class Pokemon ():
     def __init__(self, player, pokemon): # player = 1 ou 2, pokemon vient de sa liste de pokemons prise dans la bdd
         self.nom=pokebdd.get_name(player, pokemon) # récupère le nom français
@@ -91,10 +92,15 @@ class Combat():
     def affichage(self): # affichage des pokemons sur la partie pour chaque joueur
         print("\n--------------------------------")
         print(f'Joueur 1: {self.joueur1.nom}')
+        print(f'>> Pokemons de {self.joueur1.nom} :')
         for p in self.joueur1.list_pokemon:
             print(f'{p.nom} - HP: {p.base["HP"]}, TYPE: {p.type}, FAIBLESSES: {p.faiblesses}')
         print(f'>> Pokemon actif: {self.liste_pokemon_choisis[0].nom}, HP: {self.liste_pokemon_choisis[0].base["HP"]}, TYPE: {self.liste_pokemon_choisis[0].type}, FAIBLESSES: {self.liste_pokemon_choisis[0].faiblesses}\n')
+        
+        print("      ----------------------      ")
+        
         print(f'Joueur 2: {self.joueur2.nom}')
+        print(f'>> Pokemons de {self.joueur2.nom} :')
         for p in self.joueur2.list_pokemon:
             print(f'{p.nom} - HP: {p.base["HP"]}, TYPE: {p.type}, FAIBLESSES: {p.faiblesses}')
         print(f'>> Pokemon actif: {self.liste_pokemon_choisis[1].nom}, HP: {self.liste_pokemon_choisis[1].base["HP"]}, TYPE: {self.liste_pokemon_choisis[1].type}, FAIBLESSES: {self.liste_pokemon_choisis[1].faiblesses}')
@@ -141,12 +147,10 @@ class Combat():
             if j == 0:
                 self.ordre_tour[1].liste_pokemon_accessible.remove(pokemon_qui_defend)
                 self.changer_de_pokemon(1)
-                print(len(self.ordre_tour[1].liste_pokemon_accessible))
                 
             else:
                 self.ordre_tour[0].liste_pokemon_accessible.remove(pokemon_qui_defend)
                 self.changer_de_pokemon(0)
-                print(len(self.ordre_tour[0].liste_pokemon_accessible))
 
         # si tous les pokemons sont mis ko par l'attaque alors la liste des pokemons accessibles est vide
         if j == 0:
@@ -170,7 +174,7 @@ class Combat():
         else: # on choisit un pokemon au hasard parmi la liste des pokemons accessbiles
             self.liste_pokemon_choisis[j]=random.choice(self.ordre_tour[j].liste_pokemon_accessible)
 
-        # on met à choisi = False les autres pokemons
+        # on met à choisi = False les autres pokemons pour éviter les conflits avec le pokemon choisi d'avant
         for pokemon in self.ordre_tour[j].list_pokemon:
             if pokemon != self.liste_pokemon_choisis[j]:
                 pokemon.choisi == False
@@ -186,6 +190,7 @@ class Combat():
             j=1
         
         while True:
+            print(f'>>>> Tour {self.tours+1} <<<<')
             self.affichage() # on affiche les pokemons des deux joueurs
             print("Dresseur", self.ordre_tour[j].nom,"que souhaitez-vous faire ?")
             print("1) Attaquer")
@@ -197,12 +202,12 @@ class Combat():
                 self.victoire = self.attaque(j)
 
                 # si l'attaque est celle qui fait gagner
-                if self.victoire == 1:
+                if self.victoire == 1: # le joueur 1 gagne sur le joueur 2
                     pokebdd.victoire(1, 2)
                     self.fin_de_la_partie()
                     break
 
-                elif self.victoire == 2:
+                elif self.victoire == 2: # le joueur 2 gagne sur le joueur 1
                     pokebdd.victoire(2, 1)
                     self.fin_de_la_partie()
                     break
@@ -231,6 +236,7 @@ class Combat():
         # gestion de la fin de la partie et affichage de fin
         print("\n############ Fin de la partie #############")
         print(f"La partie a durée {self.tours} tours.")
+
         if self.victoire > 0:
             print(f"Le gagnant est le joueur {self.victoire}, {self.ordre_tour[1].nom}")
         elif self.victoire < 0:
@@ -240,24 +246,24 @@ class Combat():
         j1 = input("Pour le joueur 1: (oui/non)")
         j2 = input("Pour le joueur 2: (oui/non)")
 
+        # initialisation du conteur pour savoir quel(s) joueur(s) sont réinitialisés
         reset = 0
 
         if re.match('(?i)oui|o|yes|y', j1):
             pokebdd.save_player(1)
             print("Les résultats du joueur1 ont été sauvegardés dans la bdd.")
-        else:
+        else: # si on rentre autre chose que oui, on supprime le joueur
             reset = 1
 
         if re.match('(?i)oui|o|yes|y', j2):
             pokebdd.save_player(2)
             print("Les résultats du joueur2 ont été sauvegardés dans la bdd.")
-        else:
+        else: # si on rentre autre chose que oui, on supprime le joueur
             reset += 2
 
         # en fonction de la valeur du reset, on supprime les lignes qu'il faut dans la bdd
         if reset == 3:
-            pokebdd.suppr(1)
-            pokebdd.suppr(1)
+            pokebdd.reset_bdd()
         elif reset == 1:
             pokebdd.suppr(1)
         elif reset == 2:
@@ -286,7 +292,7 @@ while joueur1 == joueur2:
 
 pokebdd.debut_de_la_partie(joueur1, joueur2)
 
-# on peut manuellement reset la partie si besoin
+# on peut manuellement reset la partie si besoin avec:
 # pokebdd.reset = True
 
 # création de la liste des pokemons (si un joueur existe déjà dans la bdd, on ne va pas lui créer de nouveaux pokemons)
@@ -294,7 +300,7 @@ liste_pokemons = {1:[joueur1], 2:[joueur2]}
 for joueur in range(1,3): # de 1 à 2
     for pokemon in range(1,len(pokebdd.data[joueur-1])): # on commence à 1 car 1 c'est "player":joueur[1 à 2]
         name = "pokemon"+str(pokemon)
-        poke_name = Pokemon(joueur, name)
+        poke_name = Pokemon(joueur, name) # création des objets pokemons du joueur
         liste_pokemons[joueur].append(poke_name)
         # liste_pokemons est un dictionnaire de la forme:
         # { joueur1: [{pokemon1}, {pokemon2}, {pokemon3}], joueur2: [ {pokemon1}, {pokemon2}, {pokemon3} ]}
