@@ -3,7 +3,7 @@ Groupe 6 : Cecilia, Maureen, Yasmine, Justin, Solene
 
 <h2>Fichiers :</h2>
 
-1. Enoncé: pokemon.md
+1. Enoncé: pokemons.md
 
 2. Bases de données: pokedex.json, types.json, bdd.json (créée au premier lancement du programme)
 
