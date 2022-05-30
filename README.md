@@ -16,6 +16,6 @@ Groupe 6 : Cecilia, Maureen, Yasmine, Justin, Solene
 
 <h2>Lancement</h2>
 
-<b>Pour lancer un combat:</b> Lancer le programme principal combat.py.
+<b>Pour lancer un combat:</b> Lancer le programme principal combat.py. Entrer les noms des joueurs (différents), et vous pouvez jouer !
 
-<b>Pour lancer la connexion à distance:</b> Lancer thread.server.py et un ou plusieurs thread_client.py en parallèle.
+<b>Pour lancer la connexion à distance:</b> Lancer thread.server.py et un ou plusieurs thread_client.py en parallèle. Entrer un message dans le terminal client et un message du serveur s'affichera.
